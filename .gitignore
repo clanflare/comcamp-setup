@@ -1,0 +1,8 @@
+backend/
+caddy/
+core-backend/
+member-web/
+payments-backend/
+platform-web/
+react-native/
+web/
