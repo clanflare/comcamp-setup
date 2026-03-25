@@ -3,31 +3,85 @@ const concurrently = require('concurrently');
 
 const services = [
   // Frontend Applications
-  { name: 'member',   command: 'cd member-web && bun run dev',     color: 'cyan' }, // prettier-ignore
-  { name: 'platform', command: 'cd platform-web && bun run dev',   color: 'magenta' }, // prettier-ignore
-  // { name: 'mobile',   command: 'cd react-native && bun run android', color: 'blue' }, // prettier-ignore
+  {
+    name: "member",
+    command: "bun run dev",
+    cwd: "./member-web",
+    color: "cyan",
+  },
+  {
+    name: "platform",
+    command: "bun run dev",
+    cwd: "./platform-web",
+    color: "magenta",
+  },
+  // {
+  //   name: "mobile",
+  //   command: "bun run android",
+  //   cwd: "./react-native",
+  //   color: "blue",
+  // },
 
   // Backend Services
-  { name: 'core',     command: 'cd core-backend && bun run dev',   color: 'yellow' }, // prettier-ignore
-  { name: 'jobs',     command: 'cd core-backend && bun run jobs:dev', color: 'white' }, // prettier-ignore
+  {
+    name: "core",
+    command: "bun run dev",
+    cwd: "./core-backend",
+    color: "yellow",
+  },
+  {
+    name: "jobs",
+    command: "bun run jobs:dev",
+    cwd: "./core-backend",
+    color: "white",
+  },
 
   // Payments
-  // { name: 'pay-api',  command: 'cd payments-backend && bun run dev', color: 'red' }, // prettier-ignore
-  { name: 'pay-api',  command: `cd payments-backend && bun run dev`, color: 'red' }, // prettier-ignore
-  // { name: 'pay-jobs', command: 'cd payments-backend && bun run jobs:dev', color: 'red.dim' }, // prettier-ignore
-  { name: 'pay-css',  command: `cd payments-backend && bun run dev:css`, color: 'red.underline' }, // prettier-ignore
+  {
+    name: "pay-api",
+    command: "bun run dev",
+    cwd: "./payments-backend",
+    color: "red",
+  },
+  {
+    name: "pay-jobs",
+    command: "bun run jobs:dev",
+    cwd: "./payments-backend",
+    color: "red.dim",
+  }, // Restored
+  {
+    name: "pay-css",
+    command: "bun run dev:css",
+    cwd: "./payments-backend",
+    color: "red.underline",
+  },
 
   // Infrastructure
-  { name: 'proxy',    command: 'sudo caddy run --config ./caddy/local.caddyfile', color: 'green' }, // prettier-ignore
+  // Note: sudo often needs a shell, so we keep the command string as is
+  {
+    name: "proxy",
+    command: "sudo caddy run --config ./caddy/local.caddyfile",
+    color: "green",
+  },
 ];
 
 const { result } = concurrently(services, {
   prefix: "name",
   killOthers: ["failure", "success"],
   restartTries: 3,
+  // --- KILL & CLEANUP OPTIONS ---
+  handleInput: true, // Forwards Ctrl+C to all children
+  forceKillable: true, // Sends SIGKILL if SIGTERM is ignored
+  sigterm: true, // Ensures graceful shutdown attempt first
 });
 
 result.then(
-  () => console.log("All services exited successfully"),
-  (err) => console.error("One or more services failed", err),
+  () => {
+    console.log("\n✅ All services exited successfully");
+    process.exit(0);
+  },
+  (err) => {
+    console.error("\n❌ Processes terminated");
+    process.exit(1);
+  },
 );
