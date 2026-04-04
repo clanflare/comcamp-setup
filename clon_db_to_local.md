@@ -7,13 +7,13 @@ docker exec -it <container_id> bash
 ## 2 : Clone the database from remote
 
 NOTE: this will prompt for password
-cf-dev db password: 1234567890
+cf_dev db password: 1234567890
 
 ```bash
 pg_dump -h <remote_ip> -p 5173 -U <username> -d <dbname> -F c -f my_backup.dump
 
-# command with cf-dev credentials
-pg_dump -h 103.91.187.18 -p 30018 -U cf-dev -d com_camp -F c -f backup1.dump
+# command with cf_dev credentials
+pg_dump -h 103.91.187.18 -p 30018 -U cf_dev -d com_camp -F c -f backup1.dump
 
 ```
 
